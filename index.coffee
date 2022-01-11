@@ -56,21 +56,21 @@ router.get '/metrics', (ctx)->
     in_icu,
     total_deaths
   ] = await Promise.all [
-    dig await axios.get url 'NewCases'
-    dig await axios.get url 'ActiveCases'
-    dig await axios.get url 'Cases'
-    dig await axios.get url 'CurrentlyHosp'
-    dig await axios.get url 'CurrentlyICU'
-    dig await axios.get url 'Deaths'
+    axios.get url 'NewCases'
+    axios.get url 'ActiveCases'
+    axios.get url 'Cases'
+    axios.get url 'CurrentlyHosp'
+    axios.get url 'CurrentlyICU'
+    axios.get url 'Deaths'
   ]
 
   blocks = [
-    gauge   'new_cases',      new_cases,      'New cases today'
-    gauge   'active_cases',   active_cases,   'Active cases'
-    gauge   'in_hospital',    in_hospital,    'Number of hospitalized cases'
-    gauge   'in_icu',         in_icu,         'Number of cases in ICU'
-    counter 'total_cases',    total_cases,    'Total cases to date'
-    counter 'total_deaths',   total_deaths,   'Total deaths to date'
+    gauge   'new_cases',      dig(new_cases),      'New cases today'
+    gauge   'active_cases',   dig(active_cases),   'Active cases'
+    gauge   'in_hospital',    dig(in_hospital),    'Number of hospitalized cases'
+    gauge   'in_icu',         dig(in_icu),         'Number of cases in ICU'
+    counter 'total_cases',    dig(total_cases),    'Total cases to date'
+    counter 'total_deaths',   dig(total_deaths),   'Total deaths to date'
   ]
 
   ctx.body = blocks.join '\n\n'

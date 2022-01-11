@@ -2,7 +2,7 @@
   "name": "prometheus-covid",
   "profile": "default",
   "lambda": {
-    "memory": 128,
+    "memory": 256,
     "runtime": "nodejs14.x"
   },
   "regions": [
