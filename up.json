@@ -1,6 +1,10 @@
 {
   "name": "prometheus-covid",
   "profile": "default",
+  "lambda": {
+    "memory": 128,
+    "runtime": "nodejs14.x"
+  },
   "regions": [
     "us-east-1"
   ]
