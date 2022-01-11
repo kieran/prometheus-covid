@@ -65,10 +65,10 @@ router.get '/metrics', (ctx)->
   ]
 
   blocks = [
+    gauge   'new_cases',      new_cases,      'New cases today'
     gauge   'active_cases',   active_cases,   'Active cases'
     gauge   'in_hospital',    in_hospital,    'Number of hospitalized cases'
     gauge   'in_icu',         in_icu,         'Number of cases in ICU'
-    counter 'new_cases',      new_cases,      'New cases today'
     counter 'total_cases',    total_cases,    'Total cases to date'
     counter 'total_deaths',   total_deaths,   'Total deaths to date'
   ]
