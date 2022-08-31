@@ -4,14 +4,15 @@
 } = process.env
 
 axios   = require 'axios'
-Koa     = require 'koa'
-router  = do require 'koa-router'
+app     = do require 'express'
 
 #
 # Routes
 #
-router.get '/', root = (ctx)->
-  ctx.body = """
+app.get '/', root = (req, res)->
+  res
+    .type 'text'
+    .send """
   Usage:
 
     GET   /
@@ -22,7 +23,7 @@ router.get '/', root = (ctx)->
       Snooped from the ArcGIS dashboard at https://experience.arcgis.com/experience/a6f23959a8b14bfa989e3cda29297ded
   """
 
-router.get '/metrics', (ctx)->
+app.get '/metrics', (req, res)->
   #
   # helpers
   #
@@ -46,7 +47,7 @@ router.get '/metrics', (ctx)->
   counter = attr.bind null, 'counter'
 
   url = (name)-> "https://services1.arcgis.com/xeMpV7tU1t4KD3Ei/arcgis/rest/services/COVID19_Cases_by_BC_Health_Authority/FeatureServer/0/query?f=json&cacheHint=true&orderByFields=&outFields=*&outStatistics=[{%22onStatisticField%22:%22#{name}%22,%22outStatisticFieldName%22:%22value%22,%22statisticType%22:%22sum%22}]&resultType=standard&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=FID=4"
-  dig = ({status, data})-> data.features[0].attributes.value
+  dig = ({status, data})-> data?.features?[0]?.attributes?.value or null
 
   [
     new_cases,
@@ -66,18 +67,22 @@ router.get '/metrics', (ctx)->
 
   blocks = [
     gauge   'new_cases',      dig(new_cases),      'New cases today'
-    gauge   'active_cases',   dig(active_cases),   'Active cases'
+    # gauge   'active_cases',   dig(active_cases),   'Active cases'
     gauge   'in_hospital',    dig(in_hospital),    'Number of hospitalized cases'
     gauge   'in_icu',         dig(in_icu),         'Number of cases in ICU'
     counter 'total_cases',    dig(total_cases),    'Total cases to date'
     counter 'total_deaths',   dig(total_deaths),   'Total deaths to date'
   ]
 
-  ctx.body = blocks.join '\n\n'
+  res
+    .type 'text'
+    .send blocks.join '\n\n'
 
 #
-# Server init
+# Either start a local server, or hook up to GCF
 #
-app = new Koa
-app.use router.routes()
-app.listen PORT
+if process.env.FUNCTION_TARGET
+  exports.handler = app
+else
+  console.log "app listening on port #{PORT}"
+  app.listen PORT
