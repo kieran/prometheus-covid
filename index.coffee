@@ -73,7 +73,7 @@ gauge = attr.bind null, 'gauge'
 counter = attr.bind null, 'counter'
 
 url = (name)-> "https://services1.arcgis.com/xeMpV7tU1t4KD3Ei/arcgis/rest/services/COVID19_Cases_by_BC_Health_Authority/FeatureServer/0/query?f=json&cacheHint=true&orderByFields=&outFields=*&outStatistics=[{%22onStatisticField%22:%22#{name}%22,%22outStatisticFieldName%22:%22value%22,%22statisticType%22:%22sum%22}]&resultType=standard&returnGeometry=false&spatialRel=esriSpatialRelIntersects&where=FID=4"
-dig = ({status, data})-> data?.features?[0]?.attributes?.value or null
+dig = ({status, data})-> data?.features?[0]?.attributes?.value or 0
 
 
 #
